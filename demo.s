@@ -40,8 +40,8 @@ main:
 	li	$s0, 0	#row
 	li	$s1, 0	#col
 	li	$s2, 0	#fgcolor, valid colors are between 0 and 255
-	li	$s4, 100	#bgcolor, valid colors are between 0 and 255
-	li	$s3, 0x20	#char, printable chars are between 0x20 and 0x7e
+	li	$s3, 100	#bgcolor, valid colors are between 0 and 255
+	li	$s4, 0x20	#char, printable chars are between 0x20 and 0x7e
 	loop:
 	beq	$s0, 20, lend
 		la	$a0, printList	#create a print job by adding to the list
@@ -54,7 +54,7 @@ main:
 		sb	$s3, 6($a0)		# background color
 		#7th byte is empty
 		la	$t0, char
-		sb	$s3, 0($t0)		# update the char string 
+		sb	$s4, 0($t0)		# update the char string 
 		sw	$t0, 8($a0)		# then provide it to the job
 		li	$t0, 0xFFFF
 		sh	$t0, 12($a0)	#terminate the job list
@@ -73,10 +73,10 @@ main:
 		bne	$s2, $t0, lchar
 			li	$s2, 0
 		lchar:
-		addi	$s3, $s3, 1		#goto next char
+		addi	$s4, $s4, 1		#goto next char
 		li	$t0, 0x7e
-		bne	$s3, $t0, lcont
-			li	$s3, 0x20
+		bne	$s4, $t0, lcont
+			li	$s4, 0x20
 			
 			
 		lcont:

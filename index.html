@@ -6,7 +6,7 @@
 <noscript>
 		<meta http-equiv="refresh" content="0;url=noscript.html">
 </noscript>
-<title>GLIR</title>
+<title>GLIM</title>
 
 
 <script src="css_files/jquery.min.js"></script>
@@ -36,14 +36,11 @@
 <div class="container-fluid">
 
 <h1 class="greentext"><strong>GLIM - <span style="text-decoration: underline;">G</span>raphics <span style="text-decoration: underline;">Li</span>brary for <span style="text-decoration: underline;">M</span>IPS</strong></h1>
-
-<p><small>Created for the University of Alberta CMPUT 229 Computer Architecture course</small></p>
+	<p><small>Created for the University of Alberta CMPUT 229 Computer Architecture course</small></p>
 	<p><small>Author: Austin Crapo, June 2017</small></p>
 <hr />
 <h2 class="greentext">Information</h2>
-  <p>GLIM is a collection of sub-routines to emulate graphics and it is meant for use with SPIM and the XFCE Terminal Emulator. Although most UNIX-system terminals will work, the XFCE was the only used for testing during development. The true requirement is that the terminal emulator be DEC VT220 compliant. It the terminal emulator is not compliant GLIM functions will produce a bunch of garbled text. The purpose of GLIM is to abstract away the terminal escape sequences into an organized library that allows beginner assembly programmers to include visual elements in their work. Some high-level functions are presented here. Refer to GLIM's documentation to get the indivudual function requirements for usage.</p>
-  <h2 class="greentext">Access to the Code</h2>
-<p>The source code for GLIM can be found at: <a href="https://github.com/cmput229/GLIM">https://github.com/cmput229/GLIM</a>
+<p>GLIM is a collection of sub-routines to emulate graphics and it is meant for use with SPIM and the XFCE Terminal Emulator. Although most UNIX-system terminals will work, the XFCE was the only used for testing during development. The true requirement is that the terminal emulator be DEC VT220 compliant. It the terminal emulator is not compliant GLIM functions will produce a bunch of garbled text. The purpose of GLIM is to abstract away the terminal escape sequences into an organized library that allows beginner assembly programmers to include visual elements in their work. Some high-level functions are presented here. Refer to GLIM's documentation to get the indivudual function requirements for usage. The library is also available for <a href="https://cmput229.github.io/GLIR/">RISC-V</a>.</p>
 <h2 class="greentext">License</h2>
 <p>GLIM is free to use, available under the MIT license. Atribution under this license is not required, but always appreciated.</p>
 <h2 class="greentext">Usage</h2>
@@ -60,7 +57,7 @@
 <p>The tuple describing a position on the grid is (r, c) and not (c, r). <strong>Remember this.</strong> Terminals were designed to print text top to bottom, left to right. Their underlying control structures are built on this assumption. Thus the row number comes before the column number. The origin <code>(0, 0)</code> is at the top left of the terminal window: </p>
 <p><img src="Resources/GridAlignment.png" alt="If you think this is confusing, imagine the confusion trying to program the library while transforming coords each time, the overhead would be awful and the bugs many." /></p>
 <p>The screen above is a square grid, but terminals and fonts are not square (even if they are monospace), thus a square grid renders a rectangular shape.</p>
-<h3  class="greentext" id="screenupdates">Screen Updates</h3>
+<h3 class="greentext" id="screenupdates">Screen Updates</h3>
 <p>The terminal display that you access with GLIM should be treated as a write-only persistant array. Thus, you can 'push' updates to the screen, but you cannot revert them, you cannot see if they were successful, and you cannot make decisions based on the screen state. Instead, the best method to use GLIM is to keep your own data structure representing the screen, then when a change needs to be made to that data structure, you can make a corresponding change in the screen by 'pushing' updates to it.</p>
 <p>There are two main ways to handle the synchronization between your own data structure and GLIM. Depending on what you are trying to accomplish one will be preferable over the other, but the second is much better practice and more versatile.</p>
 <h4 class="greentext">Method 1 - Clear and Refresh</h4>
