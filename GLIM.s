@@ -193,21 +193,21 @@ printString:
 	sw	$ra, -4($fp)		# Save $ra
 	sw	$s0, -8($fp)		# Save $s0
 	
-	
-	#terminal automatically regects negative values, not certain why, but not checking for it either
-	la	$t0, TERM_ROWS	#check if past boundary
+	la	$t0, TERM_ROWS      	#check if past boundary
 	lw	$t0, 0($t0)
-	slt	$t0, $t0, $a1	#if TERM_ROWS < print row
+	bge	$a1, $t0, pSend     	#if TERM_ROWS <= print row
 	
 	la	$t1, TERM_COLS
 	lw	$t1, 0($t1)
-	slt	$t1, $t1, $a2	#or if TERM_COLS < print col
+	bge	$a2, $t1, pSend     	#or if TERM_COLS <= print col
+
+	slt $t2, $a1, $zero     	#or if print row < 0
+	slt $t3, $a2, $zero     	#or if print col < 0
 	
-	or	$t0, $t0, $t1
-	bne	$t0, $zero, pSend	#do nothing
+	or	$t2, $t2, $t3
+	bne	$t2, $zero, pSend	#then do nothing
 	
-				#else
-	
+	#else	
 	move	$s0, $a0
 	
 	move	$a0, $a1
@@ -311,8 +311,8 @@ batchPrint:
 		
 		#print to match printing code if needed
 		#if standard print, make sure to have clear color
-		li	$t0, 1		#if pcode == 1
-		beq	$s3, $t0, bPscCend
+		li	$t0, 1		#if pcode != 1
+		bne	$s3, $t0, bPscCend
 		bPsclearColor:
 			li	$t0, -1	#if lastFG != -1 
 			bne	$s6, $t0, bPscCreset
@@ -884,12 +884,29 @@ printCircle:
 		addi	$t0, $t0, 12
 		li	$t1, 0xFFFF
 		sh	$t1, 0($t0)
+
+        	# Sterilize the input to GLIR_BatchPrint of the guard value
+        	# 0xFFFF in print row to avoid not printing the remainder of a
+        	# batch if the guard is encountered
+		addi	$t0, $zero, 0		#i = 0
+		addi	$t1, $zero, 8		#loop 8 times
+		la	$t2, pClist
+		pCguardl:
+			lhu	$t3, 0($t2)	#print row
+			li	$t4, 0xFFFF	#guard
+			bne	$t3, $t4, pCsterile
+			sb	$zero, 4($t2)	#set print code 0
+			sb	$zero, 0($t2)	#reset print row
+			pCsterile:
+			addi	$t2, $t2, 12	#increment by 3 words (1 job)
+			addi	$t0, $t0, 1	#i++
+		bne $t0, $t1, pCguardl
+		
+		pCguarde:
 		la	$a0, pClist
 		jal	batchPrint
 		
-		#li	$a0, 1000
-		#jal	sleep
-		
+				
 		addi	$s1, $s1, 1		#y += 1
 		bgtz	$s2, pClmoveRow	#if(err <= 0)
 			add	$s2, $s2, $s1	#err += 2y+1
